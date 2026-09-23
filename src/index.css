@@ -128,13 +128,14 @@ menu a:focus {
 }
 
 .hero-image {
-    
+  flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
 .hero-img {
+  width: 100%;
   border-radius: 16px;
 }
 

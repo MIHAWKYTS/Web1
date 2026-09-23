@@ -10,11 +10,6 @@ export function SectionSobre() {
           Penedo-AL. A ideia é dar visibilidade a quem faz o artesanato local e
           ajudar moradores e turistas a encontrar e comprar direto de quem produz.
         </p>
-        <p>
-          Esta versão é um protótipo com dados fictícios. Quando uma associação
-          ou feira real participar, basta trocar as informações do catálogo,
-          sem mexer no layout.
-        </p>
       </div>
       <img src={sobreImg} alt="Barraca de feira com peças de artesanato" className="sobre-img" />
     </section>
