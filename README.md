@@ -53,31 +53,36 @@ Uma segunda página, aberta pelo botão **Quero fazer parte** (início) ou **Sej
 
 ## Estrutura do projeto
 
+O projeto é dividido em duas pastas: **`client`** (o front-end, o site em React) e **`server`** (o back-end, que conversa com o banco de dados).
+
 ```
 WEb1/
-├── public/
-│   ├── index.html
-│   └── fotos/                     # fotos das artesãs (o banco guarda o endereço)
-├── src/
-│   ├── App.js                     # rotas: / (Home) e /cadastro (Cadastro)
-│   ├── index.css                  # cores, tipografia, Flexbox e media queries
-│   ├── index.js                   # ponto de entrada do React
-│   ├── pages/
-│   │   ├── Home.js                # página inicial (junta todas as seções)
-│   │   └── Cadastro.js            # formulário que salva no banco
-│   ├── assets/                    # logo e ilustrações (SVG)
-│   └── components/
-│       ├── sectionLogo/
-│       │   └── sectionLogo.js     # cabeçalho (logo + ilustração do rio)
-│       ├── sectionmenu.js         # menu por âncoras + link para /cadastro
-│       ├── sectionhero.js         # seção de início
-│       ├── sectionartesas.js      # busca as artesãs no banco e mostra os cards (.map())
-│       ├── cardartesa.js          # um card de artesã, recebe dados via props
-│       ├── sectionsobre.js        # seção "Sobre a vitrine"
-│       ├── sectiononde.js         # tabela "Onde encontrar"
-│       └── sectionfooter.js       # rodapé
-├── server.js                      # servidor Express que salva no PostgreSQL
-├── package.json
+├── client/                            # FRONT-END (React)
+│   ├── public/
+│   │   ├── index.html
+│   │   └── fotos/                     # fotos das artesãs (o banco guarda o endereço)
+│   ├── src/
+│   │   ├── App.js                     # rotas: / (Home) e /cadastro (Cadastro)
+│   │   ├── index.css                  # cores, tipografia, Flexbox e media queries
+│   │   ├── index.js                   # ponto de entrada do React
+│   │   ├── pages/
+│   │   │   ├── Home.js                # página inicial (junta todas as seções)
+│   │   │   └── Cadastro.js            # formulário que salva no banco
+│   │   ├── assets/                    # logo e ilustrações (SVG)
+│   │   └── components/
+│   │       ├── sectionLogo/
+│   │       │   └── sectionLogo.js     # cabeçalho (logo + ilustração do rio)
+│   │       ├── sectionmenu.js         # menu por âncoras + link para /cadastro
+│   │       ├── sectionhero.js         # seção de início
+│   │       ├── sectionartesas.js      # busca as artesãs no banco e mostra os cards (.map())
+│   │       ├── cardartesa.js          # um card de artesã, recebe dados via props
+│   │       ├── sectionsobre.js        # seção "Sobre a vitrine"
+│   │       ├── sectiononde.js         # tabela "Onde encontrar"
+│   │       └── sectionfooter.js       # rodapé
+│   └── package.json                   # bibliotecas do front (react, react-router-dom, react-icons)
+├── server/                            # BACK-END (Express + PostgreSQL)
+│   ├── server.js                      # rotas /artesas e /cadastros, salva no PostgreSQL
+│   └── package.json                   # bibliotecas do back (express, pg, cors)
 └── README.md
 ```
 
@@ -86,33 +91,36 @@ WEb1/
 Pré-requisitos: [Node.js](https://nodejs.org) (com npm) e [Docker](https://www.docker.com) (para o PostgreSQL).
 
 ```bash
-# 1. instalar as dependências
-npm install
+# 1. instalar as dependências (só na primeira vez)
+cd client && npm install && cd ..
+cd server && npm install && cd ..
 
 # 2. criar o PostgreSQL no Docker (só na primeira vez)
 docker run -d --name feitoempenedo-db -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=feitoempenedo -p 5432:5432 -v feitoempenedo-dados:/var/lib/postgresql/data postgres:16
 # nas próximas vezes (ex.: depois de reiniciar o PC), só ligue ele:
 docker start feitoempenedo-db
 
-# 3. ligar o servidor (em um terminal)
-npm run banco
-# API em http://localhost:3001/cadastros
+# 3. ligar o back-end (em um terminal)
+cd server
+npm start
+# API em http://localhost:3001/artesas e http://localhost:3001/cadastros
 
-# 4. rodar o site (em outro terminal)
+# 4. ligar o front-end (em outro terminal)
+cd client
 npm start
 # abre em http://localhost:3000
 
-# 5. rodar os testes
+# 5. rodar os testes (dentro de client/)
 npm test
 
-# 6. gerar a versão de produção
+# 6. gerar a versão de produção (dentro de client/)
 npm run build
-# gera os arquivos otimizados em build/
+# gera os arquivos otimizados em client/build/
 ```
 
 ## Banco de dados
 
-As artesãs e os cadastros ficam no **PostgreSQL**. O arquivo `server.js` é um servidor [Express](https://expressjs.com) que liga o site ao banco. Quando liga, ele cria a tabela `cadastros` se ela ainda não existir. A tabela `artesas` foi criada e preenchida uma vez, direto no banco, com o SQL abaixo.
+As artesãs e os cadastros ficam no **PostgreSQL**. O arquivo `server/server.js` é um servidor [Express](https://expressjs.com) que liga o site ao banco. Quando liga, ele cria a tabela `cadastros` se ela ainda não existir. A tabela `artesas` foi criada e preenchida uma vez, direto no banco, com o SQL abaixo.
 
 | Rota | O que faz |
 |---|---|
@@ -160,7 +168,7 @@ O PostgreSQL roda no container `feitoempenedo-db` (porta 5432, usuário e senha 
 Por padrão o servidor conecta em `postgres://postgres:postgres@localhost:5432/feitoempenedo`. Se você usar outro PostgreSQL (com outro usuário, senha ou porta), passe outro endereço:
 
 ```bash
-DATABASE_URL=postgres://usuario:senha@localhost:5432/feitoempenedo npm run banco
+DATABASE_URL=postgres://usuario:senha@localhost:5432/feitoempenedo npm start   # dentro de server/
 ```
 
 Para ver os cadastros salvos, acesse http://localhost:3001/cadastros ou rode:
@@ -169,11 +177,11 @@ Para ver os cadastros salvos, acesse http://localhost:3001/cadastros ou rode:
 docker exec -it feitoempenedo-db psql -U postgres feitoempenedo -c "SELECT * FROM cadastros;"
 ```
 
-Se o banco estiver desligado, o `npm run banco` avisa no terminal e o formulário mostra uma mensagem de erro.
+Se o banco estiver desligado, o servidor avisa no terminal e o formulário mostra uma mensagem de erro.
 
 ## Como incluir uma artesã
 
-1. Coloque a foto em `public/fotos/` (ex.: `artesa7.svg`).
+1. Coloque a foto em `client/public/fotos/` (ex.: `artesa7.svg`).
 2. Adicione a artesã no banco:
 
 ```bash
