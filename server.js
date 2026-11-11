@@ -26,6 +26,12 @@ banco.query(`
 });
 
 
+app.get("/artesas", async (req, res) => {
+  const resultado = await banco.query("SELECT * FROM artesas ORDER BY id");
+  res.json(resultado.rows);
+});
+
+
 app.get("/cadastros", async (req, res) => {
   const resultado = await banco.query("SELECT * FROM cadastros ORDER BY id");
   res.json(resultado.rows);

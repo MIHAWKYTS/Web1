@@ -117,7 +117,7 @@ menu a:focus {
 }
 
 .hero {
-  margin-top: 40px;
+  margin-top: 0;
   display: flex;
   flex-direction: row;
   align-items: center;

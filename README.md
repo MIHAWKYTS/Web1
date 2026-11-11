@@ -56,7 +56,8 @@ Uma segunda página, aberta pelo botão **Quero fazer parte** (início) ou **Sej
 ```
 WEb1/
 ├── public/
-│   └── index.html
+│   ├── index.html
+│   └── fotos/                     # fotos das artesãs (o banco guarda o endereço)
 ├── src/
 │   ├── App.js                     # rotas: / (Home) e /cadastro (Cadastro)
 │   ├── index.css                  # cores, tipografia, Flexbox e media queries
@@ -64,15 +65,13 @@ WEb1/
 │   ├── pages/
 │   │   ├── Home.js                # página inicial (junta todas as seções)
 │   │   └── Cadastro.js            # formulário que salva no banco
-│   ├── data/
-│   │   └── artesas.js             # dados das artesãs (um objeto por artesã)
 │   ├── assets/                    # logo e ilustrações (SVG)
 │   └── components/
 │       ├── sectionLogo/
 │       │   └── sectionLogo.js     # cabeçalho (logo + ilustração do rio)
 │       ├── sectionmenu.js         # menu por âncoras + link para /cadastro
 │       ├── sectionhero.js         # seção de início
-│       ├── sectionartesas.js      # lista de cards (.map() sobre data/artesas.js)
+│       ├── sectionartesas.js      # busca as artesãs no banco e mostra os cards (.map())
 │       ├── cardartesa.js          # um card de artesã, recebe dados via props
 │       ├── sectionsobre.js        # seção "Sobre a vitrine"
 │       ├── sectiononde.js         # tabela "Onde encontrar"
@@ -113,7 +112,35 @@ npm run build
 
 ## Banco de dados
 
-Os cadastros ficam no **PostgreSQL**. O arquivo `server.js` é um servidor [Express](https://expressjs.com) que liga o site ao banco:
+As artesãs e os cadastros ficam no **PostgreSQL**. O arquivo `server.js` é um servidor [Express](https://expressjs.com) que liga o site ao banco. Quando liga, ele cria a tabela `cadastros` se ela ainda não existir. A tabela `artesas` foi criada e preenchida uma vez, direto no banco, com o SQL abaixo.
+
+| Rota | O que faz |
+|---|---|
+| `GET /artesas` | lista as artesãs (a seção **Artesãs** busca daqui ao abrir o site) |
+| `GET /cadastros` | lista os cadastros recebidos |
+| `POST /cadastros` | salva um cadastro novo do formulário |
+
+### Artesãs
+
+```sql
+CREATE TABLE artesas (
+  id SERIAL PRIMARY KEY,
+  nome TEXT NOT NULL,
+  produto TEXT NOT NULL,
+  foto TEXT NOT NULL,       -- endereço da foto, ex.: /fotos/artesa1.svg
+  whatsapp TEXT NOT NULL
+);
+
+INSERT INTO artesas (nome, produto, foto, whatsapp) VALUES
+  ('Maria das Dores', 'Bordado', '/fotos/artesa1.svg', '5500000000000'),
+  ('Joana Lima', 'Cerâmica', '/fotos/artesa2.svg', '5500000000000'),
+  ('Ana Souza', 'Renda', '/fotos/artesa3.svg', '5500000000000'),
+  ('Rita Ferreira', 'Cestaria de palha', '/fotos/artesa4.svg', '5500000000000'),
+  ('Luzia Santos', 'Doces caseiros', '/fotos/artesa5.svg', '5500000000000'),
+  ('Carlos Almeida', 'Esculturas em madeira', '/fotos/artesa6.svg', '5500000000000');
+```
+
+### Cadastros
 
 1. A pessoa preenche o formulário em `/cadastro` e clica em **Quero participar**.
 2. O React envia os dados com `fetch` (método `POST`) para `http://localhost:3001/cadastros`.
@@ -146,8 +173,11 @@ Se o banco estiver desligado, o `npm run banco` avisa no terminal e o formulári
 
 ## Como incluir uma artesã
 
-Basta adicionar um objeto em `src/data/artesas.js`; um novo card aparece automaticamente na seção **Artesãs**, sem precisar mexer no layout:
+1. Coloque a foto em `public/fotos/` (ex.: `artesa7.svg`).
+2. Adicione a artesã no banco:
 
-```js
-{ id: 7, nome: "Nome", produto: "Produto", foto: fotoNova, whatsapp: "55DDDNUMERO" }
+```bash
+docker exec -it feitoempenedo-db psql -U postgres feitoempenedo -c "INSERT INTO artesas (nome, produto, foto, whatsapp) VALUES ('Nome', 'Produto', '/fotos/artesa7.svg', '55DDDNUMERO');"
 ```
+
+Ao recarregar o site, um novo card aparece na seção **Artesãs**, sem precisar mexer no código.
