@@ -5,16 +5,15 @@ import { SectionLogo } from "../components/sectionLogo/sectionLogo";
 import { Sectionfooter } from "../components/sectionfooter";
 
 export function Cadastro() {
-  // Cada campo do formulário guarda o que foi digitado
   const [nome, setNome] = useState("");
   const [produto, setProduto] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
   const [mensagem, setMensagem] = useState("");
 
   function enviar(evento) {
-    evento.preventDefault(); // não recarrega a página
+    evento.preventDefault();
 
-    // Envia os dados para o banco (json-server salva no arquivo db.json)
+
     fetch("http://localhost:3001/cadastros", {
       method: "POST",
       headers: { "Content-Type": "application/json" },

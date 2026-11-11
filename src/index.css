@@ -229,7 +229,7 @@ th {
   color: white;
 }
 
-/* A página ocupa a tela toda e o rodapé fica sempre embaixo */
+
 .pagina {
   min-height: 100vh;
   display: flex;
@@ -240,7 +240,7 @@ th {
   padding: 0 24px;
 }
 
-/* Formulário centralizado na página */
+
 .cadastro {
   flex: 1;
   display: flex;
