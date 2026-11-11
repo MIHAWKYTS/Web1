@@ -1,3 +1,5 @@
+import { FaWhatsapp } from "react-icons/fa";
+
 export function CardArtesa({ nome, produto, foto, whatsapp }) {
   return (
     <article className="card">
@@ -10,7 +12,7 @@ export function CardArtesa({ nome, produto, foto, whatsapp }) {
         target="_blank"
         rel="noreferrer"
       >
-        Contato
+        <FaWhatsapp /> Contato
       </a>
     </article>
   );

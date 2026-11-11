@@ -52,12 +52,6 @@ p {
   margin-top: 20px;
 }
 
-.aviso {
-  background-color: var(--sol);
-  text-align: center;
-  padding: 8px 16px;
-  font-size: 14px;
-}
 
 header {
   display: flex;
@@ -85,6 +79,9 @@ menu {
 }
 
 menu a {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   color: white;
   text-decoration: none;
   font-weight: bold;
@@ -98,7 +95,13 @@ menu a:focus {
 }
 
 .botao {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: none;
+  font-family: inherit;
+  font-size: 16px;
+  cursor: pointer;
   margin-top: 16px;
   padding: 10px 20px;
   background-color: var(--terra);
@@ -226,6 +229,69 @@ th {
   color: white;
 }
 
+
+.pagina {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.voltar {
+  padding: 0 24px;
+}
+
+
+.cadastro {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 48px;
+}
+
+.formulario h2,
+.formulario p {
+  text-align: center;
+}
+
+.formulario p {
+  margin-top: 8px;
+}
+
+.mensagem {
+  text-align: center;
+  margin-top: 0;
+  font-weight: bold;
+  color: var(--rio);
+}
+
+.formulario {
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px;
+  background-color: white;
+  border: 1px solid #E5D3B8;
+  border-radius: 12px;
+}
+
+.formulario label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-weight: bold;
+  color: var(--rio);
+}
+
+.formulario input {
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #E5D3B8;
+  border-radius: 8px;
+}
+
 footer {
   margin-top: 48px;
   display: flex;
@@ -261,8 +327,7 @@ footer {
 
   .sobre-img {
     width: 100%;
-  }
-}
+  }}
 
 @media (max-width: 480px) {
   header {

@@ -1,0 +1,10 @@
+{
+  "cadastros": [
+    {
+      "nome": "teste",
+      "produto": "teste",
+      "whatsapp": "111111111",
+      "id": 1
+    }
+  ]
+}
