@@ -19,7 +19,10 @@ export function Cadastro() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ nome, produto, whatsapp }),
     })
-      .then(() => {
+      .then((resposta) => {
+        if (!resposta.ok) {
+          throw new Error();
+        }
         setMensagem("Recebemos seu interesse! Em breve entraremos em contato pelo WhatsApp.");
         setNome("");
         setProduto("");
