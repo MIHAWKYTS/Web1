@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import heroImg from "../assets/hero.svg";
 
 export function Sectionhero() {
@@ -11,7 +12,8 @@ export function Sectionhero() {
           Uma vitrine digital para o artesanato local: veja os produtos, descubra
           os dias e locais de venda e chame a artesã direto pelo WhatsApp.
         </p>
-        <a className="botao" href="#artesas">Ver artesãs</a>
+        <a className="botao" href="#artesas">Ver artesãs</a>{" "}
+        <Link className="botao" to="/cadastro">Quero fazer parte</Link>
       </div>
       <div className="hero-image">
         <img src={heroImg} alt="Igreja às margens do Rio São Francisco" className="hero-img" />

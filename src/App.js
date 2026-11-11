@@ -1,24 +1,17 @@
 import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './index.css';
-import { SectionLogo } from './components/sectionLogo/sectionLogo';
-import { Sectionmenu } from './components/sectionmenu';
-import { Sectionhero } from './components/sectionhero';
-import { SectionArtesas } from './components/sectionartesas';
-import { SectionSobre } from './components/sectionsobre';
-import { SectionOnde } from './components/sectiononde';
-import { Sectionfooter } from './components/sectionfooter';
+import { Home } from './pages/Home';
+import { Cadastro } from './pages/Cadastro';
 
 function App() {
   return (
-    <>
-      <SectionLogo />
-      <Sectionmenu />
-      <Sectionhero />
-      <SectionArtesas />
-      <SectionSobre />
-      <SectionOnde />
-      <Sectionfooter />
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/cadastro" element={<Cadastro />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
