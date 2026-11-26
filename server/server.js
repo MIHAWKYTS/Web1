@@ -22,8 +22,29 @@ banco.query(`
     whatsapp TEXT NOT NULL
   )
 `).catch(() => {
-  console.log("Não consegui conectar no PostgreSQL. Ele está ligado?");
+  console.log("Não conectou no PostgreSQL. Ele está ligado?");
 });
+
+banco.query(`
+  CREATE TABLE IF NOT EXISTS artesas (
+    id SERIAL PRIMARY KEY,
+    nome TEXT NOT NULL,
+    produto TEXT NOT NULL,
+    foto TEXT NOT NULL,
+    whatsapp TEXT NOT NULL
+  );
+
+  INSERT INTO artesas (nome, produto, foto, whatsapp)
+  SELECT * FROM (VALUES
+    ('Maria das Dores', 'Bordado', '/fotos/artesa1.svg', '5500000000000'),
+    ('Joana Lima', 'Cerâmica', '/fotos/artesa2.svg', '5500000000000'),
+    ('Ana Souza', 'Renda', '/fotos/artesa3.svg', '5500000000000'),
+    ('Rita Ferreira', 'Cestaria de palha', '/fotos/artesa4.svg', '5500000000000'),
+    ('Luzia Santos', 'Doces caseiros', '/fotos/artesa5.svg', '5500000000000'),
+    ('Carlos Almeida', 'Esculturas em madeira', '/fotos/artesa6.svg', '5500000000000')
+  ) AS dados
+  WHERE NOT EXISTS (SELECT 1 FROM artesas);
+`).catch(() => {});
 
 
 app.get("/artesas", async (req, res) => {
