@@ -39,7 +39,7 @@ O menu navega por âncoras entre as seções e o layout é responsivo, com break
 
 ### Página de cadastro (`/cadastro`)
 
-Uma segunda página, aberta pelo botão **Quero fazer parte** (início) ou **Seja uma artesã** (menu). Tem um formulário (nome, produto e WhatsApp) para quem tem interesse em aparecer na vitrine. Os dados são salvos no banco de dados (`db.json`).
+Uma segunda página, aberta pelo botão **Quero fazer parte** (início) ou **Seja uma artesã** (menu). Tem um formulário (nome, produto e WhatsApp) para quem tem interesse em aparecer na vitrine. Os dados são salvos no banco de dados PostgreSQL.
 
 ## Tecnologias
 
@@ -48,85 +48,144 @@ Uma segunda página, aberta pelo botão **Quero fazer parte** (início) ou **Sej
 - CSS (Flexbox, media queries, `:hover`)
 - [React Router](https://reactrouter.com) (`react-router-dom`): rotas entre as páginas
 - [React Icons](https://react-icons.github.io/react-icons): ícones do menu, cards e formulário
-- [json-server](https://github.com/typicode/json-server): banco de dados simples em arquivo JSON
+- [PostgreSQL](https://www.postgresql.org): banco de dados onde ficam os cadastros
+- [Express](https://expressjs.com) + [pg](https://node-postgres.com): servidor que recebe o formulário e grava no banco
 
 ## Estrutura do projeto
 
+O projeto é dividido em duas pastas: **`client`** (o front-end, o site em React) e **`server`** (o back-end, que conversa com o banco de dados).
+
 ```
 WEb1/
-├── public/
-│   └── index.html
-├── src/
-│   ├── App.js                     # rotas: / (Home) e /cadastro (Cadastro)
-│   ├── index.css                  # cores, tipografia, Flexbox e media queries
-│   ├── index.js                   # ponto de entrada do React
-│   ├── pages/
-│   │   ├── Home.js                # página inicial (junta todas as seções)
-│   │   └── Cadastro.js            # formulário que salva no banco
-│   ├── data/
-│   │   └── artesas.js             # dados das artesãs (um objeto por artesã)
-│   ├── assets/                    # logo e ilustrações (SVG)
-│   └── components/
-│       ├── sectionLogo/
-│       │   └── sectionLogo.js     # cabeçalho (logo + ilustração do rio)
-│       ├── sectionmenu.js         # menu por âncoras + link para /cadastro
-│       ├── sectionhero.js         # seção de início
-│       ├── sectionartesas.js      # lista de cards (.map() sobre data/artesas.js)
-│       ├── cardartesa.js          # um card de artesã, recebe dados via props
-│       ├── sectionsobre.js        # seção "Sobre a vitrine"
-│       ├── sectiononde.js         # tabela "Onde encontrar"
-│       └── sectionfooter.js       # rodapé
-├── db.json                        # banco de dados (json-server)
-├── package.json
+├── client/                            # FRONT-END (React)
+│   ├── public/
+│   │   ├── index.html
+│   │   └── fotos/                     # fotos das artesãs (o banco guarda o endereço)
+│   ├── src/
+│   │   ├── App.js                     # rotas: / (Home) e /cadastro (Cadastro)
+│   │   ├── index.css                  # cores, tipografia, Flexbox e media queries
+│   │   ├── index.js                   # ponto de entrada do React
+│   │   ├── pages/
+│   │   │   ├── Home.js                # página inicial (junta todas as seções)
+│   │   │   └── Cadastro.js            # formulário que salva no banco
+│   │   ├── assets/                    # logo e ilustrações (SVG)
+│   │   └── components/
+│   │       ├── sectionLogo/
+│   │       │   └── sectionLogo.js     # cabeçalho (logo + ilustração do rio)
+│   │       ├── sectionmenu.js         # menu por âncoras + link para /cadastro
+│   │       ├── sectionhero.js         # seção de início
+│   │       ├── sectionartesas.js      # busca as artesãs no banco e mostra os cards (.map())
+│   │       ├── cardartesa.js          # um card de artesã, recebe dados via props
+│   │       ├── sectionsobre.js        # seção "Sobre a vitrine"
+│   │       ├── sectiononde.js         # tabela "Onde encontrar"
+│   │       └── sectionfooter.js       # rodapé
+│   └── package.json                   # bibliotecas do front (react, react-router-dom, react-icons)
+├── server/                            # BACK-END (Express + PostgreSQL)
+│   ├── server.js                      # rotas /artesas e /cadastros, salva no PostgreSQL
+│   └── package.json                   # bibliotecas do back (express, pg, cors)
 └── README.md
 ```
 
 ## Como rodar
 
-Pré-requisito: [Node.js](https://nodejs.org) (com npm).
+Pré-requisitos: [Node.js](https://nodejs.org) (com npm) e [Docker](https://www.docker.com) (para o PostgreSQL).
 
 ```bash
-# 1. instalar as dependências
-npm install
+# 1. instalar as dependências (só na primeira vez)
+cd client && npm install && cd ..
+cd server && npm install && cd ..
 
-# 2. ligar o banco de dados (em um terminal)
-npm run banco
-# API em http://localhost:3001/cadastros
+# 2. criar o PostgreSQL no Docker (só na primeira vez)
+docker run -d --name feitoempenedo-db -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=feitoempenedo -p 5432:5432 -v feitoempenedo-dados:/var/lib/postgresql/data postgres:16
+# nas próximas vezes (ex.: depois de reiniciar o PC), só ligue ele:
+docker start feitoempenedo-db
 
-# 3. rodar o site (em outro terminal)
+# 3. ligar o back-end (em um terminal)
+cd server
+npm start
+# API em http://localhost:3001/artesas e http://localhost:3001/cadastros
+
+# 4. ligar o front-end (em outro terminal)
+cd client
 npm start
 # abre em http://localhost:3000
 
-# 4. rodar os testes
+# 5. rodar os testes (dentro de client/)
 npm test
 
-# 5. gerar a versão de produção
+# 6. gerar a versão de produção (dentro de client/)
 npm run build
-# gera os arquivos otimizados em build/
+# gera os arquivos otimizados em client/build/
 ```
 
 ## Banco de dados
 
-O banco é o [json-server](https://github.com/typicode/json-server), que transforma o arquivo `db.json` em uma API:
+As artesãs e os cadastros ficam no **PostgreSQL**. O arquivo `server/server.js` é um servidor [Express](https://expressjs.com) que liga o site ao banco. Quando liga, ele cria a tabela `cadastros` se ela ainda não existir. A tabela `artesas` foi criada e preenchida uma vez, direto no banco, com o SQL abaixo.
+
+| Rota | O que faz |
+|---|---|
+| `GET /artesas` | lista as artesãs (a seção **Artesãs** busca daqui ao abrir o site) |
+| `GET /cadastros` | lista os cadastros recebidos |
+| `POST /cadastros` | salva um cadastro novo do formulário |
+
+### Artesãs
+
+```sql
+CREATE TABLE artesas (
+  id SERIAL PRIMARY KEY,
+  nome TEXT NOT NULL,
+  produto TEXT NOT NULL,
+  foto TEXT NOT NULL,       -- endereço da foto, ex.: /fotos/artesa1.svg
+  whatsapp TEXT NOT NULL
+);
+
+INSERT INTO artesas (nome, produto, foto, whatsapp) VALUES
+  ('Maria das Dores', 'Bordado', '/fotos/artesa1.svg', '5500000000000'),
+  ('Joana Lima', 'Cerâmica', '/fotos/artesa2.svg', '5500000000000'),
+  ('Ana Souza', 'Renda', '/fotos/artesa3.svg', '5500000000000'),
+  ('Rita Ferreira', 'Cestaria de palha', '/fotos/artesa4.svg', '5500000000000'),
+  ('Luzia Santos', 'Doces caseiros', '/fotos/artesa5.svg', '5500000000000'),
+  ('Carlos Almeida', 'Esculturas em madeira', '/fotos/artesa6.svg', '5500000000000');
+```
+
+### Cadastros
 
 1. A pessoa preenche o formulário em `/cadastro` e clica em **Quero participar**.
 2. O React envia os dados com `fetch` (método `POST`) para `http://localhost:3001/cadastros`.
-3. O json-server grava o cadastro no `db.json`:
+3. O `server.js` grava o cadastro na tabela `cadastros` (criada sozinha na primeira vez):
 
-```json
-{
-  "cadastros": [
-    { "nome": "Maria", "produto": "Bordado", "whatsapp": "5582999999999", "id": 1 }
-  ]
-}
+```sql
+CREATE TABLE cadastros (
+  id SERIAL PRIMARY KEY,
+  nome TEXT NOT NULL,
+  produto TEXT NOT NULL,
+  whatsapp TEXT NOT NULL
+);
 ```
 
-Para ver os cadastros salvos, abra o `db.json` ou acesse http://localhost:3001/cadastros. Se o banco estiver desligado, o formulário mostra uma mensagem de erro.
+O PostgreSQL roda no container `feitoempenedo-db` (porta 5432, usuário e senha `postgres`). Os dados ficam no volume `feitoempenedo-dados`, então não se perdem quando o container é desligado.
+
+Por padrão o servidor conecta em `postgres://postgres:postgres@localhost:5432/feitoempenedo`. Se você usar outro PostgreSQL (com outro usuário, senha ou porta), passe outro endereço:
+
+```bash
+DATABASE_URL=postgres://usuario:senha@localhost:5432/feitoempenedo npm start   # dentro de server/
+```
+
+Para ver os cadastros salvos, acesse http://localhost:3001/cadastros ou rode:
+
+```bash
+docker exec -it feitoempenedo-db psql -U postgres feitoempenedo -c "SELECT * FROM cadastros;"
+```
+
+Se o banco estiver desligado, o servidor avisa no terminal e o formulário mostra uma mensagem de erro.
 
 ## Como incluir uma artesã
 
-Basta adicionar um objeto em `src/data/artesas.js`; um novo card aparece automaticamente na seção **Artesãs**, sem precisar mexer no layout:
+1. Coloque a foto em `client/public/fotos/` (ex.: `artesa7.svg`).
+2. Adicione a artesã no banco:
 
-```js
-{ id: 7, nome: "Nome", produto: "Produto", foto: fotoNova, whatsapp: "55DDDNUMERO" }
+```bash
+docker exec -it feitoempenedo-db psql -U postgres feitoempenedo -c "INSERT INTO artesas (nome, produto, foto, whatsapp) VALUES ('Nome', 'Produto', '/fotos/artesa7.svg', '55DDDNUMERO');"
 ```
+
+Ao recarregar o site, um novo card aparece na seção **Artesãs**, sem precisar mexer no código.
